@@ -74,8 +74,7 @@ def powerSwitch(channel):
 
   if bounceSample is int(round(powerTimeout / sampleRate)) - 1:
       #When the Power Switch is placed in the off position with no bounce for the duration of the Power Timeout, we immediately shutdown
-      GPIO.output(greenLEDGPIO, GPIO.HIGH)
-      GPIO.output(redLEDGPIO, GPIO.HIGH)
+      yellow_blink_fast()
       os.system("sudo shutdown -h now")
       try:
          sys.stdout.close()
@@ -92,6 +91,12 @@ def red_blink_fast():
     blink_time_on  = 0.5
     blink_time_off = 0.5
     leds = 0
+    update_leds(leds, blink_time_on, blink_time_off)
+
+def yellow_blink_fast():
+    blink_time_on  = 0.5
+    blink_time_off = 0.5
+    leds = 3
     update_leds(leds, blink_time_on, blink_time_off)
 
 def green_constant():
@@ -122,8 +127,12 @@ def update_leds(current_leds, time_on, time_off):
         n_cycles = int(float(poll_interval) / float(time_on + time_off))
         for i in range(n_cycles):
             # led on, sleep, led off, sleep
+            if leds == 3:
+              GPIO.output(greenLEDGPIO, GPIO.LOW)
             GPIO.output(redLEDGPIO, GPIO.LOW)
             time.sleep(time_on)
+            if leds == 3:
+              GPIO.output(greenLEDGPIO, GPIO.HIGH)
             GPIO.output(redLEDGPIO, GPIO.HIGH)
             time.sleep(time_off)
 
