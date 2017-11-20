@@ -13,6 +13,8 @@ import time
 
 batteryGPIO    = 17  # GPIO 17/pin 0
 powerGPIO      = 27  # GPIO 27/pin 2
+redLEDGPIO     = 5   # GPIO 5/pin 29
+greenLEDGPIO   = 6   # GPIO 6/pin 31
 sampleRate     = 0.1 # tenth of a second
 batteryTimeout = 10  # 10 seconds
 powerTimeout   = 1   # 1 second
@@ -23,11 +25,14 @@ playerFlag     = 0
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(batteryGPIO, GPIO.IN) # No pull_up_down for LBO with voltage clamped with diode
 GPIO.setup(powerGPIO, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+GPIO.setup(redLEDGPIO, GPIO.OUT)
+GPIO.setup(greenLEDGPIO, GPIO.OUT)
 
 def lowBattery(channel):
   #Checking for LED bounce for the duration of the battery Timeout
   for bounceSample in range(1, int(round(batteryTimeout / sampleRate))):
     time.sleep(sampleRate)
+    green_constant()
 
     if GPIO.input(batteryGPIO) is 1:
        break
@@ -50,6 +55,7 @@ def lowBattery(channel):
     playerFlag = 1
     os.system("/usr/bin/omxplayer --no-osd --layer 999999 " + lowalertVideo + " --alpha 160;")
     playerFlag = 0
+    red_blink_fast()
 
     #Discovered a bug with the Python GPIO library and threaded events.  Need to unbind and rebind after a System Call or the program will crash
     GPIO.remove_event_detect(batteryGPIO)
@@ -79,6 +85,45 @@ def powerSwitch(channel):
          pass
 
       sys.exit(0)
+
+def red_blink_fast():
+    blink_time_on  = 0.5
+    blink_time_off = 0.5
+    leds = 'red'
+    update_leds(leds, blink_time_on, blink_time_off)
+
+def green_constant():
+    blink_time_on  = 0
+    blink_time_off = 0
+    leds = 'green'
+    update_leds(leds, blink_time_on, blink_time_off)
+
+def yellow_constant():
+    blink_time_on  = 0
+    blink_time_off = 0
+    leds = 'orange'
+    update_leds(leds, blink_time_on, blink_time_off)
+
+def update_leds(current_leds, time_on, time_off):
+    global led_pin
+    global led_states
+    global poll_interval
+
+    if time_off == 0:
+        # constant on
+        if(leds=='orange')
+          GPIO.output(redLEDGPIO, GPIO.LOW)
+        GPIO.output(greenLEDGPIO, GPIO.LOW)
+        time.sleep(poll_interval)
+    else:
+        # blink
+        n_cycles = int(float(poll_interval) / float(time_on + time_off))
+        for i in range(n_cycles):
+            # led on, sleep, led off, sleep
+            GPIO.output(redLEDGPIO, GPIO.LOW)
+            time.sleep(time_on)
+            GPIO.output(redLEDGPIO, GPIO.HIGH)
+            time.sleep(time_off)
 
 def main():
   #if the Low Battery LED is active when the program launches, handle it
