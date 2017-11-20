@@ -25,7 +25,7 @@ playerFlag     = 0
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(batteryGPIO, GPIO.IN) # No pull_up_down for LBO with voltage clamped with diode
 GPIO.setup(powerGPIO, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
-#GPIO.setup(redLEDGPIO, GPIO.OUT)
+GPIO.setup(redLEDGPIO, GPIO.OUT)
 #GPIO.setup(greenLEDGPIO, GPIO.OUT)
 
 def lowBattery(channel):
@@ -68,7 +68,7 @@ def powerSwitch(channel):
   #Checking for LED bounce for the duration of the Power Timeout
   for bounceSample in range(1, int(round(powerTimeout / sampleRate))):
     time.sleep(sampleRate)
-
+    yellow_constant()
     if GPIO.input(powerGPIO) is 1:
        break
 
@@ -117,12 +117,12 @@ def update_leds(current_leds, time_on, time_off):
     global led_pin
     global led_states
     global poll_interval
-
+    poll_interval = 30
     if time_off == 0:
         # constant on
         if leds == 2:
           GPIO.output(redLEDGPIO, GPIO.LOW)
-        GPIO.output(greenLEDGPIO, GPIO.LOW)
+        #GPIO.output(greenLEDGPIO, GPIO.LOW)
         time.sleep(poll_interval)
     else:
         # blink
