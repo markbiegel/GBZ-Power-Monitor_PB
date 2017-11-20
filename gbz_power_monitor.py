@@ -25,14 +25,14 @@ playerFlag     = 0
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(batteryGPIO, GPIO.IN) # No pull_up_down for LBO with voltage clamped with diode
 GPIO.setup(powerGPIO, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
-GPIO.setup(redLEDGPIO, GPIO.OUT)
-GPIO.setup(greenLEDGPIO, GPIO.OUT)
+#GPIO.setup(redLEDGPIO, GPIO.OUT)
+#GPIO.setup(greenLEDGPIO, GPIO.OUT)
 
 def lowBattery(channel):
   #Checking for LED bounce for the duration of the battery Timeout
   for bounceSample in range(1, int(round(batteryTimeout / sampleRate))):
     time.sleep(sampleRate)
-    green_constant()
+    #green_constant()
 
     if GPIO.input(batteryGPIO) is 1:
        break
@@ -74,8 +74,10 @@ def powerSwitch(channel):
 
   if bounceSample is int(round(powerTimeout / sampleRate)) - 1:
       #When the Power Switch is placed in the off position with no bounce for the duration of the Power Timeout, we immediately shutdown
-      yellow_blink_fast()
+      #yellow_blink_fast()
       os.system("sudo shutdown -h now")
+      #GPIO.output(greenLEDGPIO, GPIO.HIGH)
+      #GPIO.output(redLEDGPIO, GPIO.HIGH)
       try:
          sys.stdout.close()
       except:
