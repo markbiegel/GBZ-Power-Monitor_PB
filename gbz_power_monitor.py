@@ -55,7 +55,7 @@ def lowBattery(channel):
     playerFlag = 1
     os.system("/usr/bin/omxplayer --no-osd --layer 999999 " + lowalertVideo + " --alpha 160;")
     playerFlag = 0
-    #red_blink_fast()
+    red_blink_fast()
 
     #Discovered a bug with the Python GPIO library and threaded events.  Need to unbind and rebind after a System Call or the program will crash
     GPIO.remove_event_detect(batteryGPIO)
@@ -74,6 +74,8 @@ def powerSwitch(channel):
 
   if bounceSample is int(round(powerTimeout / sampleRate)) - 1:
       #When the Power Switch is placed in the off position with no bounce for the duration of the Power Timeout, we immediately shutdown
+      GPIO.output(greenLEDGPIO, GPIO.HIGH)
+      GPIO.output(redLEDGPIO, GPIO.HIGH)
       os.system("sudo shutdown -h now")
       try:
          sys.stdout.close()
@@ -89,19 +91,19 @@ def powerSwitch(channel):
 def red_blink_fast():
     blink_time_on  = 0.5
     blink_time_off = 0.5
-    leds = 'red'
+    leds = 0
     update_leds(leds, blink_time_on, blink_time_off)
 
 def green_constant():
     blink_time_on  = 0
     blink_time_off = 0
-    leds = 'green'
+    leds = 1
     update_leds(leds, blink_time_on, blink_time_off)
 
 def yellow_constant():
     blink_time_on  = 0
     blink_time_off = 0
-    leds = 'orange'
+    leds = 2
     update_leds(leds, blink_time_on, blink_time_off)
 
 def update_leds(current_leds, time_on, time_off):
@@ -111,8 +113,8 @@ def update_leds(current_leds, time_on, time_off):
 
     if time_off == 0:
         # constant on
-        #if leds is "orange"
-        #  GPIO.output(redLEDGPIO, GPIO.LOW)
+        if leds == 2:
+          GPIO.output(redLEDGPIO, GPIO.LOW)
         GPIO.output(greenLEDGPIO, GPIO.LOW)
         time.sleep(poll_interval)
     else:
