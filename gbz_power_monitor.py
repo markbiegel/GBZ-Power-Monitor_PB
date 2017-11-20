@@ -111,8 +111,8 @@ def update_leds(current_leds, time_on, time_off):
 
     if time_off == 0:
         # constant on
-        if leds is "orange"
-          GPIO.output(redLEDGPIO, GPIO.LOW)
+        #if leds is "orange"
+        #  GPIO.output(redLEDGPIO, GPIO.LOW)
         GPIO.output(greenLEDGPIO, GPIO.LOW)
         time.sleep(poll_interval)
     else:
