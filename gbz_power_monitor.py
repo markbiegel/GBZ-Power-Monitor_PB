@@ -14,7 +14,7 @@ import time
 batteryGPIO    = 17  # GPIO 17/pin 0
 powerGPIO      = 27  # GPIO 27/pin 2
 redLEDGPIO     = 21   # GPIO 23 /pin 16
-greenLEDGPIO   = 12   # GPIO 24 /pin 18
+greenLEDGPIO   = 4   # GPIO 24 /pin 18
 sampleRate     = 0.1 # tenth of a second
 batteryTimeout = 10  # 10 seconds
 powerTimeout   = 1   # 1 second
@@ -75,7 +75,7 @@ def powerSwitch(channel):
       #When the Power Switch is placed in the off position with no bounce for the duration of the Power Timeout, we immediately shutdown
       #yellow_blink_fast()
       #green_flash()
-      GPIO.output(greenLEDGPIO, GPIO.HIGH)
+      GPIO.output(greenLEDGPIO, GPIO.LOW)
       os.system("sudo shutdown -h now")
       #GPIO.output(greenLEDGPIO, GPIO.HIGH)
       #GPIO.output(redLEDGPIO, GPIO.HIGH)
