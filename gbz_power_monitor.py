@@ -75,7 +75,7 @@ def powerSwitch(channel):
       #When the Power Switch is placed in the off position with no bounce for the duration of the Power Timeout, we immediately shutdown
       #yellow_blink_fast()
       green_flash()
-      GPIO.output(greenLEDGPIO, GPIO.HIGH)
+      #GPIO.output(greenLEDGPIO, GPIO.HIGH)
       os.system("sudo shutdown -h now")
       #GPIO.output(greenLEDGPIO, GPIO.HIGH)
       #GPIO.output(redLEDGPIO, GPIO.HIGH)
