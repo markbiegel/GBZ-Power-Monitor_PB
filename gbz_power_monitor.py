@@ -14,7 +14,7 @@ import time
 batteryGPIO    = 17  # GPIO 17/pin 0
 powerGPIO      = 27  # GPIO 27/pin 2
 redLEDGPIO     = 21   # GPIO 23 /pin 16
-greenLEDGPIO   = 4   # GPIO 24 /pin 18
+greenLEDGPIO   = 20   # GPIO 24 /pin 18
 sampleRate     = 0.1 # tenth of a second
 batteryTimeout = 10  # 10 seconds
 powerTimeout   = 1   # 1 second
@@ -140,6 +140,7 @@ def update_leds(current_leds, time_on, time_off):
             time.sleep(time_off)
 
 def main():
+  GPIO.output(greenLEDGPIO, GPIO.LOW)
   #green_flash()
   #if the Low Battery LED is active when the program launches, handle it
   if GPIO.input(batteryGPIO) is 0:
