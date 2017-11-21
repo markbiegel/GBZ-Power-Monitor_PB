@@ -33,6 +33,7 @@ def lowBattery(channel):
   for bounceSample in range(1, int(round(batteryTimeout / sampleRate))):
     time.sleep(sampleRate)
     #green_constant()
+    GPIO.output(greenLEDGPIO, GPIO.HIGH)
 
     if GPIO.input(batteryGPIO) is 1:
        break
@@ -75,7 +76,7 @@ def powerSwitch(channel):
       #When the Power Switch is placed in the off position with no bounce for the duration of the Power Timeout, we immediately shutdown
       #yellow_blink_fast()
       #green_flash()
-      GPIO.output(greenLEDGPIO, GPIO.HIGH)
+      
       os.system("sudo shutdown -h now")
       #GPIO.output(greenLEDGPIO, GPIO.HIGH)
       #GPIO.output(redLEDGPIO, GPIO.HIGH)
