@@ -26,7 +26,7 @@ GPIO.setmode(GPIO.BCM)
 GPIO.setup(batteryGPIO, GPIO.IN) # No pull_up_down for LBO with voltage clamped with diode
 GPIO.setup(powerGPIO, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
 GPIO.setup(redLEDGPIO, GPIO.OUT)
-#GPIO.setup(greenLEDGPIO, GPIO.OUT)
+GPIO.setup(greenLEDGPIO, GPIO.OUT)
 
 def lowBattery(channel):
   #Checking for LED bounce for the duration of the battery Timeout
