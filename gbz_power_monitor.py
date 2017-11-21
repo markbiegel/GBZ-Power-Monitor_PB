@@ -75,7 +75,7 @@ def powerSwitch(channel):
       #When the Power Switch is placed in the off position with no bounce for the duration of the Power Timeout, we immediately shutdown
       #yellow_blink_fast()
       #green_flash()
-      
+      GPIO.output(greenLEDGPIO, GPIO.HIGH)
       os.system("sudo shutdown -h now")
       #GPIO.output(greenLEDGPIO, GPIO.HIGH)
       #GPIO.output(redLEDGPIO, GPIO.HIGH)
@@ -140,7 +140,7 @@ def update_leds(current_leds, time_on, time_off):
             time.sleep(time_off)
 
 def main():
-  green_flash()
+  #green_flash()
   #if the Low Battery LED is active when the program launches, handle it
   if GPIO.input(batteryGPIO) is 0:
     lowBattery(batteryGPIO)
