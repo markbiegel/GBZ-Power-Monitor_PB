@@ -33,7 +33,6 @@ def lowBattery(channel):
   for bounceSample in range(1, int(round(batteryTimeout / sampleRate))):
     time.sleep(sampleRate)
     #green_constant()
-    GPIO.output(greenLEDGPIO, GPIO.HIGH)
 
     if GPIO.input(batteryGPIO) is 1:
        break
@@ -141,6 +140,7 @@ def update_leds(current_leds, time_on, time_off):
             time.sleep(time_off)
 
 def main():
+  green_flash()
   #if the Low Battery LED is active when the program launches, handle it
   if GPIO.input(batteryGPIO) is 0:
     lowBattery(batteryGPIO)
