@@ -13,8 +13,8 @@ import time
 
 batteryGPIO    = 17  # GPIO 17/pin 0
 powerGPIO      = 27  # GPIO 27/pin 2
-redLEDGPIO     = 5   # GPIO 5/pin 29
-greenLEDGPIO   = 6   # GPIO 6/pin 31
+redLEDGPIO     = 5   # GPIO 23 /pin 16
+greenLEDGPIO   = 6   # GPIO 24 /pin 18
 sampleRate     = 0.1 # tenth of a second
 batteryTimeout = 10  # 10 seconds
 powerTimeout   = 1   # 1 second
@@ -55,7 +55,7 @@ def lowBattery(channel):
     playerFlag = 1
     os.system("/usr/bin/omxplayer --no-osd --layer 999999 " + lowalertVideo + " --alpha 160;")
     playerFlag = 0
-    red_blink_fast()
+    #red_blink_fast()
 
     #Discovered a bug with the Python GPIO library and threaded events.  Need to unbind and rebind after a System Call or the program will crash
     GPIO.remove_event_detect(batteryGPIO)
@@ -68,7 +68,7 @@ def powerSwitch(channel):
   #Checking for LED bounce for the duration of the Power Timeout
   for bounceSample in range(1, int(round(powerTimeout / sampleRate))):
     time.sleep(sampleRate)
-    yellow_constant()
+    green_flash()
     if GPIO.input(powerGPIO) is 1:
        break
 
@@ -89,7 +89,7 @@ def powerSwitch(channel):
 
       sys.exit(0)
 
-def red_blink_fast():
+def green_flash():
     blink_time_on  = 0.5
     blink_time_off = 0.5
     leds = 0
@@ -129,13 +129,13 @@ def update_leds(current_leds, time_on, time_off):
         n_cycles = int(float(poll_interval) / float(time_on + time_off))
         for i in range(n_cycles):
             # led on, sleep, led off, sleep
-            if leds == 3:
-              GPIO.output(greenLEDGPIO, GPIO.LOW)
-            GPIO.output(redLEDGPIO, GPIO.LOW)
+            #if leds == 3:
+            #  GPIO.output(greenLEDGPIO, GPIO.LOW)
+            GPIO.output(greenLEDGPIO, GPIO.LOW)
             time.sleep(time_on)
-            if leds == 3:
-              GPIO.output(greenLEDGPIO, GPIO.HIGH)
-            GPIO.output(redLEDGPIO, GPIO.HIGH)
+            #if leds == 3:
+            #  GPIO.output(greenLEDGPIO, GPIO.HIGH)
+            GPIO.output(greenLEDGPIO, GPIO.HIGH)
             time.sleep(time_off)
 
 def main():
