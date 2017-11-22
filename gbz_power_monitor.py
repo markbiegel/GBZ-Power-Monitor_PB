@@ -73,7 +73,7 @@ def powerSwitch(channel):
 
   if bounceSample is int(round(powerTimeout / sampleRate)) - 1:
       #When the Power Switch is placed in the off position with no bounce for the duration of the Power Timeout, we immediately shutdown
-      #GPIO.output(redLEDGPIO, GPIO.LOW)
+      GPIO.output(greenLEDGPIO, GPIO.LOW)
       os.system("sudo shutdown -h now")
       #GPIO.output(greenLEDGPIO, GPIO.HIGH)
       #GPIO.output(redLEDGPIO, GPIO.HIGH)
