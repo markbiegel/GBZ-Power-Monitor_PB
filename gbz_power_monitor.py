@@ -10,11 +10,13 @@ import RPi.GPIO as GPIO
 import os
 import sys
 import time
+import threading
+import logging
 
 batteryGPIO    = 17  # GPIO 17/pin 0
 powerGPIO      = 27  # GPIO 27/pin 2
-redLEDGPIO     = 21   # GPIO 23 /pin 16
-greenLEDGPIO   = 20   # GPIO 24 /pin 18
+#redLEDGPIO     = 21   # GPIO 23 /pin 16
+greenLEDGPIO   = 21   # GPIO 24 /pin 18
 sampleRate     = 0.1 # tenth of a second
 batteryTimeout = 10  # 10 seconds
 powerTimeout   = 1   # 1 second
@@ -22,11 +24,19 @@ shutdownVideo  = "~/GBZ-Power-Monitor_PB/lowbattshutdown.mp4" # use no space or 
 lowalertVideo  = "~/GBZ-Power-Monitor_PB/lowbattalert.mp4"    # use no space or non-alphanum characters
 playerFlag     = 0
 
+logger = logging.getLogger('pi_application')
+hdlr = logging.FileHandler('led.log')
+formatter = logging.Formatter('%(asctime)s %(levelname)s %(message)s')
+hdlr.setFormatter(formatter)
+logger.addHandler(hdlr) 
+logger.setLevel(logging.WARNING)
+
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(batteryGPIO, GPIO.IN) # No pull_up_down for LBO with voltage clamped with diode
 GPIO.setup(powerGPIO, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
-GPIO.setup(redLEDGPIO, GPIO.OUT)
-GPIO.setup(greenLEDGPIO, GPIO.OUT)
+
+#GPIO.setup(greenLEDGPIO, GPIO.OUT)
+GPIO.setup(greenLEDGPIO, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
 
 def lowBattery(channel):
   #Checking for LED bounce for the duration of the battery Timeout
@@ -74,9 +84,13 @@ def powerSwitch(channel):
   if bounceSample is int(round(powerTimeout / sampleRate)) - 1:
       #When the Power Switch is placed in the off position with no bounce for the duration of the Power Timeout, we immediately shutdown
       #GPIO.output(greenLEDGPIO, GPIO.HIGH)
+      #threading.Thread(target=green_flash).start()
+      GPIO.setup(greenLEDGPIO, GPIO.OUT)
       green_flash()
       os.system("sudo shutdown -h now")
-      
+
+      logger.info("Shutdown triggered")      
+
       #GPIO.output(greenLEDGPIO, GPIO.HIGH)
       #GPIO.output(redLEDGPIO, GPIO.HIGH)
       try:
@@ -91,8 +105,8 @@ def powerSwitch(channel):
       sys.exit(0)
 
 def green_flash():
-    blink_time_on  = 0.5
-    blink_time_off = 0.5
+    blink_time_on  = 0.2
+    blink_time_off = 0.1
     leds = 0
     update_leds(leds, blink_time_on, blink_time_off)
 
@@ -138,9 +152,10 @@ def update_leds(current_leds, time_on, time_off):
             #  GPIO.output(greenLEDGPIO, GPIO.HIGH)
             GPIO.output(greenLEDGPIO, GPIO.HIGH)
             time.sleep(time_off)
+#        GPIO.setup(greenLEDGPIO, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
 
 def main():
-  GPIO.output(greenLEDGPIO, GPIO.LOW)
+  
   #green_flash()
   #if the Low Battery LED is active when the program launches, handle it
   if GPIO.input(batteryGPIO) is 0:
@@ -166,4 +181,6 @@ main()
 while True:
   time.sleep(1)
 
+#GPIO.setup(greenLEDGPIO, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+logger.info('gbz shutdown script ended')
 GPIO.cleanup()
