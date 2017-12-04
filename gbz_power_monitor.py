@@ -15,8 +15,8 @@ import logging
 
 batteryGPIO    = 17  # GPIO 17/pin 0
 powerGPIO      = 27  # GPIO 27/pin 2
-#redLEDGPIO     = 21   # GPIO 23 /pin 16
-greenLEDGPIO   = 21   # GPIO 24 /pin 18
+redLEDGPIO     = 20   # GPIO 20 /pin 16
+greenLEDGPIO   = 21   # GPIO 21 /pin 18
 sampleRate     = 0.1 # tenth of a second
 batteryTimeout = 10  # 10 seconds
 powerTimeout   = 1   # 1 second
@@ -37,6 +37,8 @@ GPIO.setup(powerGPIO, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
 
 #GPIO.setup(greenLEDGPIO, GPIO.OUT)
 GPIO.setup(greenLEDGPIO, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+GPIO.setup(redLEDGPIO, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+
 
 def lowBattery(channel):
   #Checking for LED bounce for the duration of the battery Timeout
@@ -60,12 +62,14 @@ def lowBattery(channel):
       playerFlag = 0
       sys.exit(0)
 
+
   #If the LED is a solid for more than 10% of the timeout, we know that the battery is getting low.  Launch the Low Battery alert.
   if bounceSample > int(round(batteryTimeout / sampleRate * 0.1)):
     playerFlag = 1
     os.system("/usr/bin/omxplayer --no-osd --layer 999999 " + lowalertVideo + " --alpha 160;")
     playerFlag = 0
-    #red_blink_fast()
+    GPIO.setup(redLEDGPIO, GPIO.OUT)
+    GPIO.output(redLEDGPIO, GPIO.LOW)
 
     #Discovered a bug with the Python GPIO library and threaded events.  Need to unbind and rebind after a System Call or the program will crash
     GPIO.remove_event_detect(batteryGPIO)
